@@ -1,6 +1,6 @@
 # Todo CLI Application
 
-This is a simple command-line To-Do application written in Go. The application allows users to manage their tasks efficiently by providing commands to add, list, and mark tasks as completed. Tasks are displayed in a neatly formatted table with borders.
+This is a simple command-line To-Do application written in Go. The application allows users to manage their tasks efficiently by providing commands to add, list, delete and mark tasks as completed. Tasks are displayed in a neatly formatted table with borders.
 
 ---
 
@@ -92,13 +92,27 @@ Output example:
 To mark a task as completed, use:
 
 ```bash
-todo complete <task-id>
+todo done <task-id>
 ```
 
 Example:
 
 ```bash
-todo complete 1
+todo done 1
+```
+
+### Delete a task
+
+To delete a task, use:
+
+```bash
+todo delete <task-id>
+```
+
+Example:
+
+```bash
+todo delete 1
 ```
 
 ### Help
