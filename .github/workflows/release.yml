@@ -1,6 +1,7 @@
 name: Release Binaries
 
 on:
+    workflow_dispatch:
     release:
         types: [published]
 
@@ -9,41 +10,50 @@ jobs:
         runs-on: ubuntu-latest
 
         strategy:
+            fail-fast: false
             matrix:
                 platform:
-                    - windows/amd64
-                    - linux/amd64
-                    - darwin/amd64
-                    - darwin/arm64
+                    - windows-amd64
+                    - linux-amd64
+                    - darwin-amd64
+                    - darwin-arm64
 
         steps:
             - name: Checkout Code
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Set up Go
-              uses: actions/setup-go@v4
+              uses: actions/setup-go@v5
               with:
-                  go-version: 1.23
+                  go-version: "1.23"
+                  cache: true
+
+            - name: Print Go Version
+              run: |
+                  go version
+                  go env
+
+            - name: Set Platform Variables
+              id: platform-vars
+              run: |
+                  os=$(echo "${{ matrix.platform }}" | cut -d'-' -f1)
+                  arch=$(echo "${{ matrix.platform }}" | cut -d'-' -f2)
+                  echo "os=$os" >> $GITHUB_OUTPUT
+                  echo "arch=$arch" >> $GITHUB_OUTPUT
 
             - name: Build Binary
               env:
                   GOOS: ${{ steps.platform-vars.outputs.os }}
                   GOARCH: ${{ steps.platform-vars.outputs.arch }}
-                  OUTPUT_NAME: todo-${{ matrix.platform }}
               run: |
-                  if [[ "$GOOS" == "windows" ]]; then OUTPUT_NAME+=".exe"; fi
-                  go build -o "$OUTPUT_NAME"
-
-            - name: Set Platform Variables
-              id: platform-vars
-              run: |
-                  os=$(echo "${{ matrix.platform }}" | cut -d'/' -f1)
-                  arch=$(echo "${{ matrix.platform }}" | cut -d'/' -f2)
-                  echo "os=$os" >> $GITHUB_OUTPUT
-                  echo "arch=$arch" >> $GITHUB_OUTPUT
+                  output_name="todo-${{ matrix.platform }}"
+                  if [[ "$GOOS" == "windows" ]]; then output_name+=".exe"; fi
+                  GOOS=$GOOS GOARCH=$GOARCH go build -o "$output_name"
+                  ls -l "$output_name"
 
             - name: Upload Binary
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
-                  name: ${{ matrix.platform }}
-                  path: todo-${{ matrix.platform }}*
+                  name: todo-${{ matrix.platform }}-binary
+                  path: todo-*
+                  compression-level: 0
