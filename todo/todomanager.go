@@ -3,7 +3,11 @@ package todo
 import (
 	"errors"
 	"fmt"
+	"os"
+	"strconv"
 	"time"
+
+	"github.com/olekukonko/tablewriter"
 )
 
 type TodoManager struct {
@@ -34,13 +38,31 @@ func (tm *TodoManager) ListTodos() {
 		fmt.Println("No todos found. Start adding todos with `todo add <todo>`")
 		return
 	}
+
+	println("-----------------------------")
+	println("**** List of Your Todos ****")
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"ID", "Title", "Status"})
 	for _, todo := range tm.todos {
-		status := "❌"
+		status := "Incomplete"
 		if todo.Completed {
-			status = "✅"
+			status = "Completed"
 		}
-		fmt.Printf("%d: %s [%s]\n", todo.ID, todo.Title, status)
+		table.Append([]string{
+			strconv.Itoa(todo.ID),
+			todo.Title,
+			status,
+		})
 	}
+	table.SetBorders(tablewriter.Border{Left: true, Top: true, Right: true, Bottom: true})
+	table.SetCenterSeparator("|")
+	table.SetRowSeparator("-")
+	table.SetColumnSeparator("|")
+	table.SetHeaderAlignment(tablewriter.ALIGN_CENTER)
+	table.SetAlignment(tablewriter.ALIGN_LEFT)
+
+	table.Render()
 }
 
 func (tm *TodoManager) MarkCompleted(id int) error {
