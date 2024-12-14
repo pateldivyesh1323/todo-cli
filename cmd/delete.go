@@ -20,7 +20,8 @@ var deleteCmd = &cobra.Command{
 		for _, id := range args {
 			i, err := strconv.Atoi(id)
 			if err != nil {
-				panic("Invalid ID: " + id + ", " + err.Error())
+				fmt.Println("Invalid ID: " + id)
+				return
 			}
 			todoManager.Delete(i)
 			fmt.Printf("Task '%s' deleted successfully!\n", id)
