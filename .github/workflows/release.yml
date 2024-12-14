@@ -26,15 +26,24 @@ jobs:
                   go-version: 1.18
 
             - name: Build Binary
+              env:
+                  GOOS: ${{ steps.platform-vars.outputs.os }}
+                  GOARCH: ${{ steps.platform-vars.outputs.arch }}
+                  OUTPUT_NAME: todo-${{ matrix.platform }}
               run: |
-                  GOOS=${{ matrix.platform.split('/')[0] }}
-                  GOARCH=${{ matrix.platform.split('/')[1] }}
-                  OUTPUT_NAME=todo-${{ matrix.platform.replace('/', '-') }}
                   if [[ "$GOOS" == "windows" ]]; then OUTPUT_NAME+=".exe"; fi
-                  go build -o $OUTPUT_NAME
+                  go build -o "$OUTPUT_NAME"
+
+            - name: Set Platform Variables
+              id: platform-vars
+              run: |
+                  os=$(echo "${{ matrix.platform }}" | cut -d'/' -f1)
+                  arch=$(echo "${{ matrix.platform }}" | cut -d'/' -f2)
+                  echo "os=$os" >> $GITHUB_OUTPUT
+                  echo "arch=$arch" >> $GITHUB_OUTPUT
 
             - name: Upload Binary
               uses: actions/upload-artifact@v3
               with:
                   name: ${{ matrix.platform }}
-                  path: todo-${{ matrix.platform.replace('/', '-') }}*
+                  path: todo-${{ matrix.platform }}*
