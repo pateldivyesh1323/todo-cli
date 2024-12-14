@@ -1,40 +1,40 @@
 name: Release Binaries
 
 on:
-  release:
-    types: [published]
+    release:
+        types: [published]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+    build:
+        runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        platform:
-          - windows/amd64
-          - linux/amd64
-          - darwin/amd64
-          - darwin/arm64
+        strategy:
+            matrix:
+                platform:
+                    - windows/amd64
+                    - linux/amd64
+                    - darwin/amd64
+                    - darwin/arm64
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: 1.18
+            - name: Set up Go
+              uses: actions/setup-go@v4
+              with:
+                  go-version: 1.18
 
-      - name: Build Binary
-        run: |
-          GOOS=${{ matrix.platform.split('/')[0] }}
-          GOARCH=${{ matrix.platform.split('/')[1] }}
-          OUTPUT_NAME=todo-${{ matrix.platform.replace('/', '-') }}
-          if [[ "$GOOS" == "windows" ]]; then OUTPUT_NAME+=".exe"; fi
-          go build -o $OUTPUT_NAME
+            - name: Build Binary
+              run: |
+                  GOOS=${{ matrix.platform.split('/')[0] }}
+                  GOARCH=${{ matrix.platform.split('/')[1] }}
+                  OUTPUT_NAME=todo-${{ matrix.platform.replace('/', '-') }}
+                  if [[ "$GOOS" == "windows" ]]; then OUTPUT_NAME+=".exe"; fi
+                  go build -o $OUTPUT_NAME
 
-      - name: Upload Binary
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ matrix.platform }}
-          path: todo-${{ matrix.platform.replace('/', '-') }}*
+            - name: Upload Binary
+              uses: actions/upload-artifact@v3
+              with:
+                  name: ${{ matrix.platform }}
+                  path: todo-${{ matrix.platform.replace('/', '-') }}*
