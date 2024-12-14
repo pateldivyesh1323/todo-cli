@@ -44,9 +44,10 @@ func (tm *TodoManager) ListTodos() {
 }
 
 func (tm *TodoManager) MarkCompleted(id int) error {
-	for _, todo := range tm.todos {
-		if todo.ID == id {
-			tm.todos[id].Completed = true
+	for i, t := range tm.todos {
+		if t.ID == id {
+			t.Completed = true
+			tm.todos = append(tm.todos[:i], append([]Todo{t}, tm.todos[i+1:]...)...)
 			return nil
 		}
 	}

@@ -19,18 +19,16 @@ func init() {
 		_, err := os.Create(storageFile)
 		fmt.Println("✅ Storage file created for storing todos")
 		if err != nil {
-			fmt.Println("Error creating storage file:", err)
+			panic("Error creating storage file: " + err.Error())
 		}
 	} else if err != nil {
-		fmt.Println("Error opening storage file:", err)
+		panic("Error opening storage file: " + err.Error())
 	}
 
 	// Load todos from storage
-	todos, err := storage.LoadTodos(storageFile)
-	if err != nil {
-		fmt.Println("No todos found. Start adding todos with `todo add <todo>`")
-	}
+	todos, _ := storage.LoadTodos(storageFile)
 	todoManager = todo.NewTodoManager(todos)
+	cmd.SetTodoManager(todoManager)
 }
 
 func main() {

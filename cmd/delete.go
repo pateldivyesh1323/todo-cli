@@ -1,11 +1,11 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
@@ -13,15 +13,18 @@ import (
 // deleteCmd represents the delete command
 var deleteCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Delete a Task",
+	Long: `Delete a task from the list of tasks. For example:
+	todo delete [id]`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("delete called")
+		for _, id := range args {
+			i, err := strconv.Atoi(id)
+			if err != nil {
+				panic("Invalid ID: " + id + ", " + err.Error())
+			}
+			todoManager.Delete(i)
+			fmt.Printf("Task '%s' deleted successfully!\n", id)
+		}
 	},
 }
 

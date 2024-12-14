@@ -1,11 +1,11 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 )
@@ -13,15 +13,18 @@ import (
 // doneCmd represents the done command
 var doneCmd = &cobra.Command{
 	Use:   "done",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Mark a task as completed",
+	Long: `Mark a task as completed. For example:
+	todo done [id]`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("done called")
+		for _, id := range args {
+			i, err := strconv.Atoi(id)
+			if err != nil {
+				panic("Invalid ID: " + id + ", " + err.Error())
+			}
+			todoManager.MarkCompleted(i)
+			fmt.Printf("Task '%s' marked as completed!\n", id)
+		}
 	},
 }
 

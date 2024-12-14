@@ -11,7 +11,6 @@ import (
 )
 
 // addCmd represents the add command
-var todo string
 var addCmd = &cobra.Command{
 	Use:   "add [todo]",
 	Short: "Add a new task",
@@ -21,7 +20,7 @@ var addCmd = &cobra.Command{
 	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		title := strings.Join(args, " ")
-		// todoManager(title)
+		todoManager.AddTodo(title)
 		fmt.Printf("Task '%s' added successfully!\n", title)
 	},
 }

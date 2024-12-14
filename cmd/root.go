@@ -5,9 +5,12 @@ package cmd
 
 import (
 	"os"
+	"todo-cli/todo"
 
 	"github.com/spf13/cobra"
 )
+
+var todoManager *todo.TodoManager
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -38,4 +41,8 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+}
+
+func SetTodoManager(manager *todo.TodoManager) {
+	todoManager = manager
 }
